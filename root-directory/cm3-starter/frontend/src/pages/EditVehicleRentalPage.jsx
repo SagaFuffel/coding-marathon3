@@ -113,7 +113,7 @@ const EditVehicleRentalPage = () => {
 
     if (success) {
       toast.success("Vehicle rental updated successfully");
-      navigate(`/vehiclerentals/${id}`);
+      navigate(`/`);
     } else {
       toast.error("Failed to update vehicle rental");
     }

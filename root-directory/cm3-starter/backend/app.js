@@ -11,7 +11,7 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 //app.use(requestLogger);
-connectDB();
+
 // Routes
 app.use('/api/vehicleRentals', vehicleRentalRouter);
 app.use('/api/users', userRouter);
