@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 const AddVehicleRentalPage = () => {
   const [vehicleModel, setVehicleModel] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Economy");
   const [description, setDescription] = useState("");
   const [agencyName, setAgencyName] = useState("");
   const [agencyEmail, setAgencyEmail] = useState("");
@@ -16,7 +16,7 @@ const AddVehicleRentalPage = () => {
   const [insurancePolicy, setInsurancePolicy] = useState("");
 
   const navigate = useNavigate();
-  const AddVehicleRental = async (newVehicleRental) => {
+  const addVehicleRental = async (newVehicleRental) => {
     try {
       const res = await fetch("/api/vehicleRentals", {
         method: "POST",
@@ -35,9 +35,13 @@ const AddVehicleRentalPage = () => {
     return true;
   };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
+    let deadline = null;
+    if (bookingDeadline) {
+      deadline = new Date(bookingDeadline);
+    }
     const newVehicleRental = {
       vehicleModel: vehicleModel,
       category: category,
@@ -45,20 +49,24 @@ const AddVehicleRentalPage = () => {
       agency: {
         name: agencyName,
         contactEmail: agencyEmail,
-        fleetSize: Number(fleetSize),
-        location: {
+        fleetSize: Number(fleetSize),},
+      location: {
           city: city,
           state: state,
         },
-      },
+      
       dailyPrice: Number(dailyPrice),
       availabilityStatus: availabilityStatus,
-      bookingDeadline: bookingDeadline ? new Date(bookingDeadline) : null,
+      bookingDeadline: deadline,
       insurancePolicy: insurancePolicy,
     };
-
-    AddVehicleRental(newVehicleRental);
-    return navigate("/add-vehicle-rental");
+    const success = await addVehicleRental(newVehicleRental);
+    if (success) {
+      toast.success("Vehicle rental added successfully");
+      navigate("/"); //
+    } else {
+      toast.error("Failed to add vehicle rental");
+    }
   };
 
   return (
@@ -72,7 +80,7 @@ const AddVehicleRentalPage = () => {
           onChange={(e) => setVehicleModel(e.target.value)}
           required
         />
-        
+
         <label>Category:</label>
         <select
           value={category}

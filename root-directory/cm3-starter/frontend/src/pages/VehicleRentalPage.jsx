@@ -1,9 +1,7 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-//hi
 const VehicleRentalPage = () => {
   const [vehicleRental, setVehicleRental] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -11,17 +9,18 @@ const VehicleRentalPage = () => {
   const { vehicleId } = useParams();
   const navigate = useNavigate();
 
-  const deleteVehicleRental = async (vehicleId) => {
+  const deleteVehicleRental = async (id) => {
     try {
-      const res = await fetch (`/api/vehicleRentals/${vehicleId}`,{
+      const res = await fetch(`/api/vehicleRentals/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) {
         throw new Error("Failed to delete rental");
       }
-    } catch (err) {
-      console.err("Error deleting rental", err);
-      toast.err("Failed to delete the rental");
+      return true;
+    } catch (error) {
+      console.error("Error deleting rental", error);
+      return false;
     }
   };
 
@@ -30,12 +29,12 @@ const VehicleRentalPage = () => {
       try {
         const res = await fetch(`/api/vehicleRentals/${vehicleId}`);
         if (!res.ok) {
-          throw new Error("Net response not ok");
+          throw new Error("Network response not ok");
         }
         const data = await res.json();
         setVehicleRental(data);
-      } catch (err) {
-        setErr(err.message)
+      } catch (error) {
+        setErr(error.message);
       } finally {
         setLoading(false);
       }
@@ -43,47 +42,64 @@ const VehicleRentalPage = () => {
     fetchVehicleRental();
   }, [vehicleId]);
 
-  const onDeleteClick = (vehicleId) => {
-    const accept = window.accept(
-      "Are you sure you want to delete the rental?"
-    );
-    if (!accept) return;
-    deleteVehicleRental(vehicleId);
-    toast.yay("Rental deleted succesfully");
-    navigate("/rentals")  //!!!!!!!!!!!!!!!!!!!!!!
+  const onDeleteClick = async (id) => {
+    const accept = window.confirm("Are you sure you want to delete the rental?");
+    if (!accept) {
+      return;
+    }
+
+    const success = await deleteVehicleRental(id);
+
+    if (success) {
+      toast.success("Rental deleted successfully");
+      navigate("/");
+    } else {
+      toast.error("Failed to delete the rental");
+    }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (err) return <p>Error: {err}</p>;
-  if (!vehicleRental) return <p>No rental found</p>;
+  const formatDate = (value) => {
+    if (!value) {
+      return "";
+    }
+    return value.slice(0, 10);
+  };
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+  if (err) {
+    return <p>Error: {err}</p>;
+  }
+  if (!vehicleRental) {
+    return <p>No rental found</p>;
+  }
 
   return (
     <div className="rental-preview">
       <h2>Vehicle Rental Details</h2>
-      <p>vehicleModel: {vehicleRental.vehicleModel}</p>
-      <p>category: {vehicleRental.category}</p>
+      <p>Vehicle model: {vehicleRental.vehicleModel}</p>
+      <p>Category: {vehicleRental.category}</p>
       <p>Description: {vehicleRental.description}</p>
-      <p></p>
+
       <p>Agency details:</p>
-      <p>Name: {vehicleRental.agencyName}</p>
-      <p>Email: {vehicleRental.agencyEmail}</p>
-      <p>Fleetsize: {vehicleRental.fleetSize}</p>
-      <p></p>
+      <p>Name: {vehicleRental.agency.name}</p>
+      <p>Email: {vehicleRental.agency.contactEmail}</p>
+      <p>Fleet size: {vehicleRental.agency.fleetSize}</p>
+
       <p>Location details:</p>
-      <p>City: {vehicleRental.city}</p>
-      <p>State: {vehicleRental.state}</p>
+      <p>City: {vehicleRental.location.city}</p>
+      <p>State: {vehicleRental.location.state}</p>
+
       <p>Daily price: {vehicleRental.dailyPrice}</p>
-      <p>Listing date: {vehicleRental.listingDate}</p>
+      <p>Listing date: {formatDate(vehicleRental.listingDate)}</p>
       <p>Availability status: {vehicleRental.availabilityStatus}</p>
-      <p>Booking deadline: {vehicleRental.bookingDeadline}</p>
+      <p>Booking deadline: {formatDate(vehicleRental.bookingDeadline)}</p>
       <p>Insurance policy: {vehicleRental.insurancePolicy}</p>
-      
+
       <div className="EditButton">
-        <Link to={`/EditVehicleRentalPage/${vehicleId}`}>Edit</Link>
-        <button onClick={() => onDeleteClick(vehicleRental.vehicleId)}>
-          Delete
-        </button>
+        <Link to={`/edit-rental/${vehicleId}`}>Edit</Link>
+        <button onClick={() => onDeleteClick(vehicleRental.id)}>Delete</button>
       </div>
     </div>
   );

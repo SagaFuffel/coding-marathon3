@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // GET /api/vehicleRentals
 const getAllVehicleRentals = async (req, res) => {
   try {
-    const vehicleRentals = await VehicleRental.find({}).sort({createAt: -1});
+    const vehicleRentals = await VehicleRental.find({}).sort({createdAt: -1});
     res.status(200).json(vehicleRentals);
   } catch (error) {
     res.status(500).json({message: "failed to retrieve vehicle rental"})

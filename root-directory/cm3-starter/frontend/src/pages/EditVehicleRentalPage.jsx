@@ -1,47 +1,44 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-//npm install --save react-toastify
 
-const EditVehicleRentalPage = (vehicleRental) => {
+const EditVehicleRentalPage = () => {
   const [vehicleRental, setVehicleRental] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { vehicleId } = useParams();
 
-  //variables:
   const [vehicleModel, setVehicleModel] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Economy");
   const [description, setDescription] = useState("");
 
-  //agency:
   const [agencyName, setAgencyName] = useState("");
   const [agencyEmail, setAgencyEmail] = useState("");
-  const [fleetSize, setFleetSize] = useState("");
+  const [fleetSize, setFleetSize] = useState(0);
 
-  //location:
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
 
-  const [dailyPrice, setDailyPrice] = useState("");
-  const [listingDate, setListingDate] = useState("");
-  const [availabilityStatus, setAvailabilityStatus] = useState("");
+  const [dailyPrice, setDailyPrice] = useState(0);
+  const [availabilityStatus, setAvailabilityStatus] = useState("available");
   const [bookingDeadline, setBookingDeadline] = useState("");
   const [insurancePolicy, setInsurancePolicy] = useState("");
 
-  const updateVehicleRentalPage = async (vehicleRental) => {
+  const updateVehicleRental = async (updatedVehicleRental) => {
     try {
-      const res = await fetch(`api/vehicleRentals/${vehicleRental.vehicleId}`, {
+      const res = await fetch(`/api/vehicleRentals/${vehicleId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(vehicleRental),
+        body: JSON.stringify(updatedVehicleRental),
       });
-      if (!res.ok) throw new Error("Failed to update vehicleRental");
-      return res.ok;
-    } catch (err) {
-      console.err("Error updating vehicleRental:", err);
+      if (!res.ok) {
+        throw new Error("Failed to update vehicleRental");
+      }
+      return true;
+    } catch (error) {
+      console.error("Error updating vehicleRental:", error);
       return false;
     }
   };
@@ -49,9 +46,9 @@ const EditVehicleRentalPage = (vehicleRental) => {
   useEffect(() => {
     const fetchVehicleRental = async () => {
       try {
-        const res = await fetch(`api/vehicleRentals/${vehicleId}`);
+        const res = await fetch(`/api/vehicleRentals/${vehicleId}`);
         if (!res.ok) {
-          throw new Error("Net response was not ok");
+          throw new Error("Network response was not ok");
         }
         const data = await res.json();
         setVehicleRental(data);
@@ -60,57 +57,60 @@ const EditVehicleRentalPage = (vehicleRental) => {
         setCategory(data.category);
         setDescription(data.description);
 
-        setAgencyName(data.agencyName);
-        setAgencyEmail(data.agencyEmail);
-        setFleetSize(data.fleetSize);
+        setAgencyName(data.agency.name);
+        setAgencyEmail(data.agency.contactEmail);
+        setFleetSize(data.agency.fleetSize || 0);
 
-        setCity(data.city);
-        setState(data.state);
+        setCity(data.location.city);
+        setState(data.location.state);
 
+        setDailyPrice(data.dailyPrice);
         setAvailabilityStatus(data.availabilityStatus);
-        setBookingDeadline(data.bookingDeadline);
         setInsurancePolicy(data.insurancePolicy);
-      } catch (err) {
-        console.err("Failed to fetch vehicleRental:", err);
+
+        if (data.bookingDeadline) {
+          setBookingDeadline(data.bookingDeadline.slice(0, 10));
+        }
+      } catch (error) {
+        console.error("Failed to fetch vehicleRental:", error);
       } finally {
         setLoading(false);
-      };
+      }
     };
 
     fetchVehicleRental();
   }, [vehicleId]);
 
-
-  //form
-  const updatedVehicleRentalPage = {
-    vehicleId,
-    vehicleModel,
-    category,
-    description,
-    agency: {
-      name: agencyName,
-      email: agencyEmail,
-      fleetSize,
-    },
-    location: {
-      city,
-      state,
-    },
-    dailyPrice,
-    listingDate,
-    availabilityStatus,
-    bookingDeadline,
-    insurancePolicy,
-  };
   const submitForm = async (e) => {
     e.preventDefault();
 
-  const yay = await updateVehicleRentalPage(updatedVehicleRentalPage);
-  if (yay) {
-    toast.yay("vehicleRental updated succesfully");
-    navigate(`/vehiclerentals/${vehicleId}`) //MIGHT BE vehiclerental
-  } else {
-    toast.err("Failed to update vehicleRental");
+    const updatedVehicleRental = {
+      vehicleModel: vehicleModel,
+      category: category,
+      description: description,
+      agency: {
+        name: agencyName,
+        contactEmail: agencyEmail,
+        fleetSize: Number(fleetSize),
+      },
+      location: {
+        city: city,
+        state: state,
+      },
+      dailyPrice: Number(dailyPrice),
+      availabilityStatus: availabilityStatus,
+      bookingDeadline: bookingDeadline,
+      insurancePolicy: insurancePolicy,
+    };
+
+    const success = await updateVehicleRental(updatedVehicleRental);
+
+    if (success) {
+      toast.success("Vehicle rental updated successfully");
+      navigate(`/vehiclerentals/${vehicleId}`);
+    } else {
+      toast.error("Failed to update vehicle rental");
+    }
   };
 
   if (loading) {
@@ -123,7 +123,7 @@ const EditVehicleRentalPage = (vehicleRental) => {
 
   return (
     <div className="create">
-      <h2>Add a New Vehicle Rental</h2>
+      <h2>Edit Vehicle Rental</h2>
       <form onSubmit={submitForm}>
         <label>Vehicle Model:</label>
         <input
@@ -233,6 +233,6 @@ const EditVehicleRentalPage = (vehicleRental) => {
       </form>
     </div>
   );
-}
 };
+
 export default EditVehicleRentalPage;

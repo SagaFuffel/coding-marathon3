@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import VehicleRentalListings from "../components/VehicleRentalListings";
 
 const Home = () => {
-  const [vehicleRentals, setVehicleRentals] = useState([null]);
+  const [vehicleRentals, setVehicleRentals] = useState([]);
   const [isPending, setIsPending] = useState(true);
   const [error, setError] = useState(null);
 
