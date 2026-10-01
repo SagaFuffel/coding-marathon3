@@ -6,7 +6,7 @@ const EditVehicleRentalPage = () => {
   const [vehicleRental, setVehicleRental] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { vehicleId } = useParams();
+  const { id } = useParams();
 
   const [vehicleModel, setVehicleModel] = useState("");
   const [category, setCategory] = useState("Economy");
@@ -27,30 +27,10 @@ const EditVehicleRentalPage = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = user ? user.token : null;
 
-  const updateVehicleRental = async (updatedVehicleRental) => {
-    try {
-      const res = await fetch(`/api/vehicleRentals/${vehicleId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, 
-        },
-        body: JSON.stringify(updatedVehicleRental),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to update vehicleRental");
-      }
-      return true;
-    } catch (error) {
-      console.error("Error updating vehicleRental:", error);
-      return false;
-    }
-  };
-
   useEffect(() => {
     const fetchVehicleRental = async () => {
       try {
-        const res = await fetch(`/api/vehicleRentals/${vehicleId}`);
+        const res = await fetch(`/api/vehiclerentals/${id}`);
         if (!res.ok) {
           throw new Error("Network response was not ok");
         }
@@ -81,9 +61,31 @@ const EditVehicleRentalPage = () => {
         setLoading(false);
       }
     };
-
     fetchVehicleRental();
-  }, [vehicleId]);
+  }, [id]);
+
+  const updateVehicleRental = async (updatedVehicleRental) => {
+    try {
+      const res = await fetch(`/api/vehicleRentals/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
+        },
+        body: JSON.stringify(updatedVehicleRental),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to update vehicleRental");
+      }
+      return true;
+    } catch (error) {
+      console.error("Error updating vehicleRental:", error);
+      return false;
+    }
+  };
+
+  
+
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -111,7 +113,7 @@ const EditVehicleRentalPage = () => {
 
     if (success) {
       toast.success("Vehicle rental updated successfully");
-      navigate(`/vehiclerentals/${vehicleId}`);
+      navigate(`/vehiclerentals/${id}`);
     } else {
       toast.error("Failed to update vehicle rental");
     }

@@ -6,15 +6,15 @@ const VehicleRentalPage = ({isAuthenticated}) => {
   const [vehicleRental, setVehicleRental] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
-  const { vehicleId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const user = JSO.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const token = user ? user.token : null;
 
-  const deleteVehicleRental = async (id) => {
+  const deleteVehicleRental = async (vehicleId) => {
     try {
-      const res = await fetch(`/api/vehicleRentals/${id}`, {
+      const res = await fetch(`/api/vehiclerentals/${vehicleId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -32,8 +32,9 @@ const VehicleRentalPage = ({isAuthenticated}) => {
 
   useEffect(() => {
     const fetchVehicleRental = async () => {
+      console.log(id)
       try {
-        const res = await fetch(`/api/vehicleRentals/${vehicleId}`);
+        const res = await fetch(`/api/vehiclerentals/${id}`);
         if (!res.ok) {
           throw new Error("Network response not ok");
         }
@@ -46,15 +47,15 @@ const VehicleRentalPage = ({isAuthenticated}) => {
       }
     };
     fetchVehicleRental();
-  }, [vehicleId]);
+  }, [id]);
 
-  const onDeleteClick = async (id) => {
+  const onDeleteClick = async (vehicleId) => {
     const accept = window.confirm("Are you sure you want to delete the rental?");
     if (!accept) {
       return;
     }
 
-    const success = await deleteVehicleRental(id);
+    const success = await deleteVehicleRental(vehicleId);
 
     if (success) {
       toast.success("Rental deleted successfully");
@@ -84,7 +85,7 @@ const VehicleRentalPage = ({isAuthenticated}) => {
   return (
     <div className="rental-preview">
       <h2>Vehicle Rental Details</h2>
-      <p>Vehicle model: {vehicleRental.vehicleModel}</p>
+     <p>Vehicle model: {vehicleRental.vehicleModel}</p>
       <p>Category: {vehicleRental.category}</p>
       <p>Description: {vehicleRental.description}</p>
 
@@ -101,12 +102,12 @@ const VehicleRentalPage = ({isAuthenticated}) => {
       <p>Listing date: {formatDate(vehicleRental.listingDate)}</p>
       <p>Availability status: {vehicleRental.availabilityStatus}</p>
       <p>Booking deadline: {formatDate(vehicleRental.bookingDeadline)}</p>
-      <p>Insurance policy: {vehicleRental.insurancePolicy}</p>
+      <p>Insurance policy: {vehicleRental.insurancePolicy}</p> 
 
       {isAuthenticated && (
         <div className="EditButton">
-        <Link to={`/edit-rental/${vehicleId}`}>Edit</Link>
-        <button onClick={() => onDeleteClick(vehicleRental.id)}>Delete</button>
+        <button onClick={() => navigate(`/edit-vehicle-rental/${vehicleRental._id}`)}>Edit</button>
+        <button onClick={() => onDeleteClick(vehicleRental._id)}>Delete</button>
         </div>
       )};
       
