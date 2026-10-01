@@ -12,7 +12,7 @@ app.use(requestLogger);
 
 // Routes
 app.use('/api/vehicleRentals', vehicleRentalRouter);
-
+app.use('/api/users', require('./routes/userRoutes'));
 // Error handling
 app.use(unknownEndpoint);
 app.use(errorHandler);
