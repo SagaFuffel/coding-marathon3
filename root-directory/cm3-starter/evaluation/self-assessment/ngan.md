@@ -1,0 +1,1 @@
+I evaluate I did well and successfully completed my assigned work. Although I felt uncertain about my section before, but after a few hours of hands-on practice and fixing bugs, I picked up a lot of new logic and I've gotten much better at this
