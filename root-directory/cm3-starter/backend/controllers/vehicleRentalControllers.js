@@ -32,7 +32,7 @@ const getVehicleRentalById = async (req, res) => {
   }
 
   try {
-    const vehicleRentals = await VehicleRental.findById(vehicleRentalIdId);
+    const vehicleRentals = await VehicleRental.findById(vehicleRentalId);
     if (vehicleRentals) {
       res.status(200).json(vehicleRentals);
     } else {
@@ -47,7 +47,7 @@ const getVehicleRentalById = async (req, res) => {
 const updateVehicleRental = async (req, res) => {
   const { vehicleRentalId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(vehicleRentalIdId)) {
+  if (!mongoose.Types.ObjectId.isValid(vehicleRentalId)) {
     return res.status(400).json({ message: "Invalid vehicle rentals ID" });
   }
 
@@ -72,7 +72,7 @@ const updateVehicleRental = async (req, res) => {
 const deleteVehicleRental = async (req, res) => {
   const { vehicleRentalId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(vehicleRentalIdId)) {
+  if (!mongoose.Types.ObjectId.isValid(vehicleRentalId)) {
     return res.status(400).json({ message: "Invalid vehicle rentals ID" });
   }
 
@@ -95,4 +95,3 @@ module.exports = {
   updateVehicleRental,
   deleteVehicleRental,
 };
-
