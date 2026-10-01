@@ -15,7 +15,9 @@ const generateToken = (_id) => {
 
 // Signup user
 const signupUser = async (req, res) => {
+  
   try {
+    console.log("Signup request body:", req.body);
     const {
       name,
       username,
