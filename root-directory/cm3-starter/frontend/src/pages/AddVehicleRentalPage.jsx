@@ -18,7 +18,7 @@ const AddVehicleRentalPage = () => {
   const navigate = useNavigate();
   const AddVehicleRental = async (newVehicleRental) => {
     try {
-      const res = await fetch("/api/vehicle_rental", {
+      const res = await fetch("/api/vehiclerental", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -168,7 +168,7 @@ const AddVehicleRentalPage = () => {
           onChange={(e) => setInsurancePolicy(e.target.value)}
           required
         />
-        
+
         <button>Add Vehicle Rental</button>
       </form>
     </div>
