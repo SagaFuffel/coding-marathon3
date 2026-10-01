@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const Signup = ({ setIsAuthenticated }) => {
     const navigate = useNavigate();
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
+    const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [phone_number, setPhoneNumber] = useState("");
     const [licenseNumber, setLicenseNumber] = useState("");
@@ -20,12 +20,12 @@ const Signup = ({ setIsAuthenticated }) => {
         e.preventDefault();
         setError(null);
 
-        const response = await fetch("/api/signup", {
+        const response = await fetch("/api/users/signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                email,
                 password,
+                username,
                 name,
                 phone_number,
                 licenseNumber,
@@ -42,9 +42,9 @@ const Signup = ({ setIsAuthenticated }) => {
             return;
         }
 
-    
+
         localStorage.setItem("user", JSON.stringify(user));
-        setIsAuthenticated(true);  
+        setIsAuthenticated(true);
         console.log("success");
         navigate("/");
     };
@@ -55,10 +55,10 @@ const Signup = ({ setIsAuthenticated }) => {
             <form onSubmit={handleFormSubmit}>
                 <label>Name:</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-                <label>Email address:</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <label>Password:</label>
                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <label>Username:</label>
+                <input type="text" value={username} onChange={(e) => setUserName(e.target.value)} />
                 <label>Phone Number:</label>
                 <input type="text" value={phone_number} onChange={(e) => setPhoneNumber(e.target.value)} />
                 <label>Date of Birth:</label>
