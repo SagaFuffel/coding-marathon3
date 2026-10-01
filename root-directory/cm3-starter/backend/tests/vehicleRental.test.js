@@ -31,7 +31,8 @@ const vehicleRentals = [
 ];
 
 beforeAll(async () => {
-  await mongoose.connect(config.TEST_MONGO_URI);
+//   await mongoose.connect(config.TEST_MONGO_URI);
+    await mongoose.connect(config.MONGO_URI);
 });
 
 beforeEach(async () => {

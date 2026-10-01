@@ -7,4 +7,3 @@ const MONGO_URI = process.env.NODE_ENV === 'test'
   : process.env.MONGO_URI;
 
 module.exports = { PORT, MONGO_URI };
-
