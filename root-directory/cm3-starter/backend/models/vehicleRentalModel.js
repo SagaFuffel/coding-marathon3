@@ -72,5 +72,6 @@ vehicleRentalSchema.set('toJSON', {
   }
 });
 
+
 module.exports = mongoose.model("VehicleRental", vehicleRentalSchema);
 
