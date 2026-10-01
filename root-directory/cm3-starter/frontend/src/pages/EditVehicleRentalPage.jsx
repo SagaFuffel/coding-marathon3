@@ -31,7 +31,7 @@ const EditVehicleRentalPage = (vehicleRental) => {
 
   const updateVehicleRentalPage = async (vehicleRental) => {
     try {
-      const res = await fetch(`api/vehiclerental/${vehicleRental.vehicleId}`, {
+      const res = await fetch(`api/vehicleRentals/${vehicleRental.vehicleId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -49,7 +49,7 @@ const EditVehicleRentalPage = (vehicleRental) => {
   useEffect(() => {
     const fetchVehicleRental = async () => {
       try {
-        const res = await fetch(`api/vehiclerental/${vehicleId}`);
+        const res = await fetch(`api/vehicleRentals/${vehicleId}`);
         if (!res.ok) {
           throw new Error("Net response was not ok");
         }
