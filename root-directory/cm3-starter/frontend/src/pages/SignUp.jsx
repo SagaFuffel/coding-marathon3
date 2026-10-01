@@ -30,9 +30,11 @@ const Signup = ({ setIsAuthenticated }) => {
                 phone_number,
                 licenseNumber,
                 date_of_birth,
-                licenseExpiryDate,
-                city,
-                yearsOfExperience
+                address: {
+                    licenseExpiryDate,
+                    city,
+                    yearsOfExperience
+                }
             }),
         });
         const user = await response.json();
