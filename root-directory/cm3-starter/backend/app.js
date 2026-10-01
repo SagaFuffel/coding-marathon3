@@ -10,14 +10,20 @@ const cors = require('cors');
 
 app.use(cors());
 app.use(express.json());
-//app.use(requestLogger);
-
-// Routes
-app.use('/api/vehicleRentals', vehicleRentalRouter);
 app.use('/api/users', userRouter);
-// Error handling
-app.use(unknownEndpoint);
+app.use('/api/vehicleRentals', vehicleRentalRouter);
+app.use(express.static('view'));
+app.use('/api',unknownEndpoint);
 app.use(errorHandler);
+app.use((req, res) => {
+  res.sendFile(__dirname + '/view/index.html');
+});
+
+
+
+
+
+
 
 module.exports = app;
 
