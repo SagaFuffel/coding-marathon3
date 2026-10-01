@@ -15,13 +15,18 @@ const AddVehicleRentalPage = () => {
   const [bookingDeadline, setBookingDeadline] = useState("");
   const [insurancePolicy, setInsurancePolicy] = useState("");
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user ? user.token : null;
+
   const navigate = useNavigate();
+
   const addVehicleRental = async (newVehicleRental) => {
     try {
       const res = await fetch("/api/vehicleRentals", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newVehicleRental),
       });
@@ -49,12 +54,13 @@ const AddVehicleRentalPage = () => {
       agency: {
         name: agencyName,
         contactEmail: agencyEmail,
-        fleetSize: Number(fleetSize),},
+        fleetSize: Number(fleetSize),
+      },
       location: {
-          city: city,
-          state: state,
-        },
-      
+        city: city,
+        state: state,
+      },
+
       dailyPrice: Number(dailyPrice),
       availabilityStatus: availabilityStatus,
       bookingDeadline: deadline,
