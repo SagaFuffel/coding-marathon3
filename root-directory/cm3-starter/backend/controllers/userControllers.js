@@ -4,23 +4,36 @@ const bcrypt = require("bcryptjs");
 
 // Generate JWT
 const generateToken = (_id) => {
-  return jwt.sign({ _id }, process.env.SECRET, {
-    expiresIn: "3d",
-  });
+  return jwt.sign(
+    { _id },
+    process.env.SECRET,
+    {
+      expiresIn: "3d",
+    }
+  );
 };
 
-
+// Signup user
 const signupUser = async (req, res) => {
-  const {
-    name,
-    username,
-    password,
-    phone_number,
-    licenseNumber,
-    date_of_birth,
-    address: { licenseExpiryDate, city, yearsOfExperience },
-  } = req.body;
   try {
+    const {
+      name,
+      username,
+      password,
+      phone_number,
+      licenseNumber,
+      date_of_birth,
+      address,
+    } = req.body;
+
+    // Get fields from address
+    const {
+      licenseExpiryDate,
+      city,
+      yearsOfExperience,
+    } = address || {};
+
+    // Check required fields
     if (
       !name ||
       !username ||
@@ -28,17 +41,25 @@ const signupUser = async (req, res) => {
       !phone_number ||
       !licenseNumber ||
       !date_of_birth ||
-      !address || !licenseExpiryDate || !city || !yearsOfExperience
+      !address ||
+      !licenseExpiryDate ||
+      !city ||
+      yearsOfExperience === undefined ||
+      yearsOfExperience === null ||
+      yearsOfExperience === ""
     ) {
-      res.status(400);
-      throw new Error("Please add all fields");
+      return res.status(400).json({
+        error: "Please add all fields",
+      });
     }
-    // Check if user exists
+
+    // Check if user already exists
     const userExists = await User.findOne({ username });
 
     if (userExists) {
-      res.status(400);
-      throw new Error("User already exists");
+      return res.status(400).json({
+        error: "User already exists",
+      });
     }
 
     // Hash password
@@ -56,38 +77,77 @@ const signupUser = async (req, res) => {
       address: {
         licenseExpiryDate,
         city,
-        yearsOfExperience
+        yearsOfExperience,
       },
     });
 
-    if (user) {
-      const token = generateToken(user._id);
-      res.status(201).json({ username, token });
-    } else {
-      res.status(400);
-      throw new Error("Invalid user data");
+    // Check if user was created
+    if (!user) {
+      return res.status(400).json({
+        error: "Invalid user data",
+      });
     }
+
+    // Generate JWT
+    const token = generateToken(user._id);
+
+    // Return response
+    return res.status(201).json({
+      username: user.username,
+      token,
+    });
+
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Signup error:", error);
+
+    return res.status(400).json({
+      error: error.message,
+    });
   }
 };
 
-
+// Login user
 const loginUser = async (req, res) => {
-  const { username, password } = req.body;
   try {
-    // Check for user username
+    const {
+      username,
+      password,
+    } = req.body;
+
+    // Check required fields
+    if (!username || !password) {
+      return res.status(400).json({
+        error: "Please provide username and password",
+      });
+    }
+
+    // Find user
     const user = await User.findOne({ username });
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    // Check username and password
+    if (
+      user &&
+      (await bcrypt.compare(password, user.password))
+    ) {
+      // Generate JWT
       const token = generateToken(user._id);
-      res.status(200).json({ username, token });
-    } else {
-      res.status(400);
-      throw new Error("Invalid credentials");
+
+      return res.status(200).json({
+        username: user.username,
+        token,
+      });
     }
+
+    return res.status(400).json({
+      error: "Invalid credentials",
+    });
+
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Login error:", error);
+
+    return res.status(400).json({
+      error: error.message,
+    });
   }
 };
 

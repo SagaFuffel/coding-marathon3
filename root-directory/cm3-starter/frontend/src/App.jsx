@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import { useState } from "react";
 
 import Home from "./pages/HomePage";
@@ -8,8 +7,8 @@ import VehicleRentalPage from "./pages/VehicleRentalPage";
 import EditVehicleRentalPage from "./pages/EditVehicleRentalPage";
 import Navbar from "./components/Navbar";
 import NotFoundPage from "./pages/NotFoundPage";
-import SignUp from "./components/SignUp";
-import LogIn from "./components/LogIn";
+import SignUp from "./pages/SignUp";
+import LogIn from "./pages/LogIn";
 
 
 const App = () => {
