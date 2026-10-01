@@ -24,12 +24,16 @@ const EditVehicleRentalPage = () => {
   const [bookingDeadline, setBookingDeadline] = useState("");
   const [insurancePolicy, setInsurancePolicy] = useState("");
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user ? user.token : null;
+
   const updateVehicleRental = async (updatedVehicleRental) => {
     try {
       const res = await fetch(`/api/vehicleRentals/${vehicleId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
         },
         body: JSON.stringify(updatedVehicleRental),
       });
