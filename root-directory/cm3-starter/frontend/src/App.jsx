@@ -32,7 +32,7 @@ return (
               element={<VehicleRentalPage isAuthenticated={isAuthenticated} />}
             />
             <Route
-              path="/add-vehicle-rental"
+              path="/add-rental"
               element={
                 isAuthenticated ? <AddVehicleRentalPage /> : <Navigate to="/signup" />
               }

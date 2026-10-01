@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 const AddVehicleRentalPage = () => {
   const [vehicleModel, setVehicleModel] = useState("");
   const [category, setCategory] = useState("Economy");
