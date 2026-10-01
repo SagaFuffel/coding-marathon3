@@ -1,0 +1,1 @@
+I would say I did good in the CM3, tried hard and finished my part as well as our group part. We finished at the end, a bit late but finished!
